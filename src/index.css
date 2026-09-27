@@ -1,0 +1,254 @@
+@import "tailwindcss";
+
+/* ------------------------------------------------------------------ */
+/*  Elizabeth Hayati — editorial magazine design system (Tailwind v4)  */
+/*  Warm cream paper · dark slate ink · bronze accents                 */
+/* ------------------------------------------------------------------ */
+
+@theme {
+  --font-display: "Anton", "Arial Narrow", "Impact", sans-serif;
+  --font-serif: "Fraunces", Georgia, "Times New Roman", serif;
+  --font-sans: "Space Grotesk", ui-sans-serif, system-ui, -apple-system,
+    "Segoe UI", Roboto, sans-serif;
+
+  /* Surfaces */
+  --color-cream: #f2efe8;
+  --color-paper: #f8f6f1;
+  --color-sand: #e3dcd0;
+
+  /* Typography */
+  --color-ink: #232b36;
+  --color-ink-soft: #5b6572;
+
+  /* Dark panels */
+  --color-coal: #1b232e;
+  --color-coal-deep: #131a23;
+  --color-fog: #9aa2ad;
+
+  /* Bronze accent */
+  --color-bronze: #a97e52;
+  --color-bronze-soft: #c8a97e;
+  --color-bronze-deep: #86613b;
+
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+
+  --animate-marquee: marquee 30s linear infinite;
+  --animate-sheen: sheen 9s ease-in-out infinite;
+  --animate-spin-slow: spin 14s linear infinite;
+
+  @keyframes marquee {
+    to {
+      transform: translateX(-50%);
+    }
+  }
+
+  @keyframes sheen {
+    0%,
+    100% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+  }
+
+  @keyframes drift-shard {
+    from {
+      transform: translateY(0) rotate(0deg);
+    }
+    to {
+      transform: translateY(calc(var(--shard-drift, 12px) * -1)) rotate(4deg);
+    }
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/*  Base                                                               */
+/* ------------------------------------------------------------------ */
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  background: var(--color-cream);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  overflow-x: clip;
+}
+
+::selection {
+  background: var(--color-bronze);
+  color: var(--color-cream);
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #c9c2b4 transparent;
+}
+*::-webkit-scrollbar {
+  width: 9px;
+  height: 9px;
+}
+*::-webkit-scrollbar-thumb {
+  background: #c9c2b4;
+  border-radius: 8px;
+}
+*::-webkit-scrollbar-thumb:hover {
+  background: #b0a893;
+}
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* ------------------------------------------------------------------ */
+/*  Editorial primitives                                               */
+/* ------------------------------------------------------------------ */
+
+/* Giant hero name — dark slate fill with a slow bronze light sweep */
+.name-fill {
+  background: linear-gradient(
+    105deg,
+    #3a4552 0%,
+    #232b36 32%,
+    #4a3a28 50%,
+    #232b36 68%,
+    #3a4552 100%
+  );
+  background-size: 220% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  animation: var(--animate-sheen);
+}
+
+/* Outlined display text for dark panels */
+.text-outline-cream {
+  color: transparent;
+  -webkit-text-stroke: 1px rgba(242, 239, 232, 0.14);
+}
+
+/* Nav links — smooth expanding underline */
+.nav-link {
+  position: relative;
+}
+.nav-link::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -5px;
+  height: 1px;
+  width: 100%;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: transform 0.5s var(--ease-out-expo);
+}
+.nav-link:hover::after,
+.nav-link:focus-visible::after {
+  transform: scaleX(1);
+  transform-origin: left;
+}
+
+/* Custom cursor takes over on fine-pointer devices */
+@media (pointer: fine) {
+  body,
+  body a,
+  body button {
+    cursor: none;
+  }
+}
+
+/* Film-grain overlay for the whole page */
+.grain {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  pointer-events: none;
+  opacity: 0.05;
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='180'%20height='180'%3E%3Cfilter%20id='n'%3E%3CfeTurbulence%20type='fractalNoise'%20baseFrequency='0.85'%20numOctaves='2'%20stitchTiles='stitch'/%3E%3C/filter%3E%3Crect%20width='180'%20height='180'%20filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* Floating glass shard used behind the hero subject */
+.glass-shard {
+  background: linear-gradient(
+    120deg,
+    rgba(255, 255, 255, 0.38),
+    rgba(255, 255, 255, 0.08)
+  );
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  box-shadow: 0 18px 40px -18px rgba(27, 35, 46, 0.35);
+}
+
+/* Idle "breathing" float for the hero subject — slow bob + micro sway,
+   anchored at the feet so the rotation reads as a natural weight shift */
+@keyframes subject-float {
+  0%,
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-11px) rotate(-0.4deg);
+  }
+}
+.subject-float {
+  animation: subject-float 7.5s ease-in-out infinite;
+  transform-origin: 50% 100%;
+  will-change: transform;
+}
+
+/* Skill pill */
+.pill {
+  border: 1px solid var(--color-sand);
+  background: var(--color-paper);
+  transition:
+    border-color 0.35s var(--ease-out-expo),
+    background-color 0.35s var(--ease-out-expo),
+    transform 0.35s var(--ease-out-expo);
+}
+.pill:hover {
+  border-color: var(--color-bronze);
+  background: var(--color-cream);
+  transform: translateY(-2px);
+}
+
+/* Hairline separator that fades at both ends */
+.hairline-x {
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(35, 43, 54, 0.18),
+    transparent
+  );
+}
+.hairline-x-dark {
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(242, 239, 232, 0.16),
+    transparent
+  );
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
